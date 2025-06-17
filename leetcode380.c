@@ -12,5 +12,6 @@ struct s2 {
 int main(){
     //測試
     //test分支測試
+    //test分支測試2
     printf("s1 size is %d and s2 is %d" , sizeof(struct  s1),sizeof(struct s2));  
 }
