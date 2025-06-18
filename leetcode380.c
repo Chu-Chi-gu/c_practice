@@ -31,7 +31,7 @@ bool randomizedSetInsert(RandomizeSet* obj, int val) {
         obj->arr[obj->size] = val;
         h->value = obj->size;
         obj->size++;
-        HASH_FIND_INT(obj->hashTable, h->key, h);
+        HASH_ADD_INT(obj->hashTable, key, h);
         return true;
     }
     return false;
@@ -58,8 +58,12 @@ void randomizeSetFree(RandomizeSet* obj) {
     free(obj);
 }
 int main(){
-    //測試
-    //test分支測試
-    //master分支
-    printf("s1 size is %d and s2 is %d" , sizeof(struct  s1),sizeof(struct s2));  
+    int val_1 = 1;
+    RandomizeSet* obj = randomizeSetCreate();
+    bool param_1 = randomizedSetInsert(obj,val_1);
+    bool param_2 = randomizeSetRemove(obj,val_1);
+    int  param_3 = randomizeSetGetRandom(obj);
+    randomizeSetFree(obj);
+   
+    return 0;
 }
