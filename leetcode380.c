@@ -4,12 +4,11 @@
 #define MAX_SIZE 100000
 #define HASH_SIZE 10007
 
-typedef struct{
+typedef struct {
     int idx;
-    int value;
+    int val;
     bool used;
 }HashNode;
-
 typedef struct 
 {
     int* arr;
@@ -18,63 +17,58 @@ typedef struct
 }RandomizeSet;
 
 unsigned int hashFunc(int val) {
-    return abs(val)%HASH_SIZE;
+    return abs(val) % HASH_SIZE;
 }
-int hashFind(HashNode* hash, int val) {
+int hash_find(HashNode* hash, int val) {
     int h = hashFunc(val);
-    while(hash[h].used) {
-        if(hash[h].value == val) {
+    while( hash[h].used ) {
+        if( hash[h].val == val ) {
             return h;
         }
-        h = (h+1) % MAX_SIZE;
+        h = (h+1) % HASH_SIZE;
     }
     return h;
 }
 
 RandomizeSet* randomizeSetCreate() {
-    RandomizeSet* r = malloc(sizeof(RandomizeSet));
-    r->arr  = malloc(sizeof(int)*MAX_SIZE);
-    r->size = 0;
-    r->hash = calloc(HASH_SIZE,sizeof(HashNode));
-    return r;
+    RandomizeSet* obj = malloc(sizeof(RandomizeSet));
+    obj->arr = malloc(sizeof(int)*MAX_SIZE);
+    obj->size = 0;
+    obj->hash = calloc(HASH_SIZE, sizeof(HashNode));
+    return obj;
 }
 bool randomizedSetInsert(RandomizeSet* obj, int val) {
-    
-    int index = hashFind(obj->hash, val);
-    if(obj->hash[index].used && obj->hash[index].value == val) {
+    int index = hash_find(obj->hash, val);
+    if( obj->hash[index].used == true && obj->hash[index].val == val ) {
         return false;
     }
-    obj->arr[obj->size]    = val;
-    obj->hash[index].value = val;
-    obj->hash[index].idx   = obj->size;
-    obj->hash[index].used  = true;
+    obj->hash[index].used = true;
+    obj->hash[index].val  = val;
+    obj->hash[index].idx  = obj->size;
+
+    obj->arr[obj->size] = val;
     obj->size++;
     return true;
 }
 bool randomizeSetRemove(RandomizeSet* obj, int val) {
-    int index = hashFind(obj->hash, val);
-    if( !(obj->hash[index].used) || obj->hash[index].value != val ) {
+    int index = hash_find(obj->hash, val);
+    if( obj->hash[index].used == false || obj->hash[index].val != val ) {
         return false;
     }
-    
+
     int idx     = obj->hash[index].idx;
-    int lastVal = obj->arr[obj->size - 1];
+    int lastVal = obj->arr[obj->size-1];
+    int lastH   = hash_find(obj->hash, lastVal);
 
-    obj->arr[idx] = lastVal;
-
-    int lastH = hashFind(obj->hash, lastVal);
-    while( obj->hash[lastH].value != lastVal ) {
-        lastH = (lastH + 1) % MAX_SIZE;
-    }
-    obj->hash[lastH].idx = idx;
-
-    obj->hash[index].used = false;
     obj->size--;
+    obj->arr[idx] = lastVal;
+    obj->hash[lastH].idx = idx;
+    obj->hash[index].used = false;
     return true;
 }
 int randomizeSetGetRandom(RandomizeSet* obj) {
-    int r = rand() % obj->size;
-    return obj->arr[r];
+   int index = rand() % obj->size;
+   return obj->arr[index];
 }
 void randomizeSetFree(RandomizeSet* obj) {
     free(obj->arr);
@@ -87,7 +81,7 @@ int main(){
     
     bool param_1 = randomizedSetInsert(obj,3);
     printf("param1=%d\n",param_1);
-    bool param_2 = randomizeSetRemove(obj,2);
+    bool param_2 = randomizeSetRemove(obj,3);
     printf("param2=%d\n",param_2);
     int  param_3 = randomizeSetGetRandom(obj);
     printf("param3=%d\n",param_3);
